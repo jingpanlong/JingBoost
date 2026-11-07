@@ -12,7 +12,7 @@ from core import (autostart, cleaner, icons, network, processes, reg, repair,
                   scanner, services, startup, sysinfo, tweaks, winapi)
 
 APP_NAME = "景同志·电脑加速"
-APP_VERSION = "1.4.3"
+APP_VERSION = "1.4.4"
 AUTHOR = {
     "wechat": "景同志",
     "xhs": "景同学",

@@ -524,6 +524,31 @@ def _oem_codec() -> str:
         return "mbcs"
 
 
+def _try_utf16le(data: bytes) -> "str | None":
+    """尝试按 UTF-16LE 解码，并校验结果像不像正常文本。
+
+    SFC / DISM 的控制台输出是 UTF-16LE（ASCII 字符也占两字节，每个后面跟
+    一个 0x00）。这种字节流几乎总能被 GBK「成功」解码——解出来是一堆
+    生僻汉字（「嚯璒qb碾」这种），而且不抛异常，导致按 OEM 兜底的旧逻辑
+    永远轮不到正确答案，「未发现完整性冲突」之类的结果判断也全部失效。
+    所以这里解完后还要看内容：NUL 占比过高或不可打印字符过多就放弃。
+    """
+    if len(data) % 2:
+        data = data[:-1]
+    if len(data) < 4:
+        return None
+    try:
+        text = data.decode("utf-16-le")
+    except UnicodeDecodeError:
+        return None
+    if text.count("\x00") > len(text) // 2:
+        return None
+    printable = sum(1 for ch in text if ch.isprintable() or ch in "\t\r\n")
+    if len(text) and printable / len(text) < 0.7:
+        return None
+    return text.replace("\x00", "")
+
+
 def _decode_text(data: bytes) -> str:
     """先把子进程输出正确解码。
 
@@ -531,14 +556,37 @@ def _decode_text(data: bytes) -> str:
     UTF-8 输出所以没问题，但 powercfg / netsh / sc 按 OEM 代码页（简中 = 936）
     输出，用 UTF-8 解就会变成乱码（电源计划名显示成「ƽ」这种），
     而且 errors="ignore" 会把解不出来的中文直接吞掉。
+
+    v1.4.3 补充：SFC / DISM 输出是 UTF-16LE，必须先探测（BOM / NUL 占比），
+    否则会被 OEM 解成生僻汉字乱码。
     """
     if not data:
         return ""
+    if data.startswith(b"\xff\xfe"):
+        try:
+            return data.decode("utf-16")
+        except UnicodeDecodeError:
+            pass
+    # NUL 字节多 → 大概率是 UTF-16LE；GBK 文本几乎不含 0x00，不会误伤
+    if len(data) >= 8 and data.count(0) * 3 >= len(data):
+        text = _try_utf16le(data)
+        if text is not None:
+            return text
     for enc in ("utf-8", _oem_codec(), "mbcs"):
         try:
-            return data.decode(enc)
+            text = data.decode(enc)
         except (UnicodeDecodeError, LookupError):
             continue
+        if "\x00" in text and len(data) >= 8:
+            # 纯 ASCII 的 UTF-16LE 能被 UTF-8「成功」解码出夹心 NUL，
+            # 同样回退到 UTF-16LE 再试一次
+            text16 = _try_utf16le(data)
+            if text16 is not None:
+                return text16
+        return text
+    text = _try_utf16le(data)
+    if text is not None:
+        return text
     return data.decode("utf-8", "replace")
 
 

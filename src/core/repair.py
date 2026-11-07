@@ -31,7 +31,36 @@ def _stream(cmd: list[str], cb=None, timeout: int = 3600) -> tuple[int, str]:
     start = time.time()
     assert p.stdout is not None
     for raw in p.stdout:
-        line = winapi._decode_text(raw).rstrip()
+        # UTF-16LE 输出（SFC / DISM）的换行是 \r\x00\n\x00，按 b"\n" 切行后：
+        # 行尾是 \r\x00（必须精确剥这两个字节——不能 rstrip，否则会把内容里
+        # 「%」(U+0025) 等字符的低字节 0x00 一起剥掉，破坏字节对齐）；
+        # 从第二行起行首还带着上一行换行的低字节 \x00，剥掉与否以「剥完后
+        # 能否解码成正常文本」为准，不能见 00 就剥（「开」U+5F00 低字节也是 0x00）。
+        b = raw
+        if b.endswith(b"\n"):
+            b = b[:-1]
+        if b.endswith(b"\r\x00"):
+            b = b[:-2]
+        elif b.endswith(b"\r"):
+            b = b[:-1]
+        if b.count(0):
+            # 行里出现 NUL 字节 → 只可能是 UTF-16LE（GBK/UTF-8 文本不含 0x00）。
+            # 奇数长度说明行首带着上一行换行的低字节 \x00，优先试剥掉它的版本。
+            candidates = []
+            if len(b) % 2 and b.startswith(b"\x00"):
+                candidates.append(b[1:])
+            candidates.append(b)
+            line = None
+            for cand in candidates:
+                text = winapi._try_utf16le(cand)
+                if text is not None:
+                    line = text.rstrip()
+                    break
+            if line is None:
+                line = winapi._decode_text(b).rstrip()
+        else:
+            line = winapi._decode_text(b).rstrip()
+        line = line.replace("\x00", "")
         if not line.strip():
             continue
         lines.append(line)
