@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>景同志·电脑加速 安装程序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Microsoft YaHei UI", "Segoe UI", system-ui, sans-serif;
+    background: radial-gradient(900px 500px at 20% -10%, #16254a 0%, transparent 60%),
+                linear-gradient(160deg, #070a12, #0a1020 60%, #060910);
+    color: #eaf0ff; font-size: 13px; user-select: none;
+    display: flex; flex-direction: column;
+  }
+  .orb { position: fixed; width: 460px; height: 460px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.22), transparent 70%);
+    filter: blur(70px); pointer-events: none; }
+  .orb.a { left: -140px; top: -180px; }
+  .orb.b { right: -160px; bottom: -200px;
+    background: radial-gradient(circle, rgba(99,102,241,.18), transparent 70%); }
+
+  .wrap { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;
+    padding: 30px 40px 22px; }
+
+  .head { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 54px; height: 54px; border-radius: 15px; display: grid; place-items: center;
+    background: linear-gradient(150deg, rgba(56,189,248,.2), rgba(99,102,241,.25));
+    border: 1px solid rgba(120,170,255,.3);
+    box-shadow: 0 12px 34px rgba(56,120,255,.28), inset 0 1px 0 rgba(255,255,255,.16); }
+  .logo svg { width: 28px; height: 28px; }
+  .head h1 { font-size: 18px; font-weight: 650; letter-spacing: .4px; }
+  .head p { font-size: 11.5px; color: #6b7893; margin-top: 4px; }
+
+  .view { flex: 1; display: none; flex-direction: column; justify-content: center; }
+  .view.on { display: flex; animation: fade .26s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+
+  .field { margin-top: 26px; }
+  .field > label { font-size: 11.5px; color: #9aa8c4; display: block; margin-bottom: 8px; }
+  .pathrow { display: flex; gap: 9px; }
+  input[type=text] {
+    flex: 1; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 10px 13px; color: #eaf0ff; font-size: 12.5px;
+    font-family: inherit; outline: none; user-select: text;
+  }
+  input[type=text]:focus { border-color: rgba(59,130,246,.6); background: rgba(59,130,246,.08); }
+
+  .btn { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.055);
+    color: #eaf0ff; border-radius: 10px; padding: 10px 20px; font-size: 12.5px;
+    font-family: inherit; cursor: pointer; transition: all .16s; white-space: nowrap; }
+  .btn:hover { background: rgba(255,255,255,.1); }
+  .btn.primary { background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: rgba(120,170,255,.5); font-weight: 600;
+    box-shadow: 0 8px 24px rgba(37,99,235,.35); padding: 10px 26px; }
+  .btn.primary:hover { background: linear-gradient(135deg, #4f92ff, #2f6ff0); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .opts { margin-top: 20px; display: flex; flex-direction: column; gap: 11px; }
+  .opt { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: #cdd9ef;
+    cursor: pointer; }
+  .opt input { appearance: none; width: 16px; height: 16px; border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,.25); position: relative; cursor: pointer; }
+  .opt input:checked { background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #3b82f6; }
+  .opt input:checked::after { content: ""; position: absolute; left: 4.6px; top: 1.6px;
+    width: 4px; height: 8px; border: solid #fff; border-width: 0 1.8px 1.8px 0;
+    transform: rotate(43deg); }
+
+  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px; }
+  .tip { font-size: 11px; color: #6b7893; margin-top: 12px; line-height: 1.6; }
+
+  /* 安装中 */
+  .prog-wrap { width: 100%; }
+  .prog-label { display: flex; justify-content: space-between; font-size: 12.5px;
+    color: #cdd9ef; margin-bottom: 10px; }
+  .bar { height: 8px; border-radius: 6px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0%; border-radius: 6px;
+    background: linear-gradient(90deg, #38bdf8, #6366f1);
+    box-shadow: 0 0 14px rgba(56,189,248,.6); transition: width .4s ease; }
+  .step-txt { font-size: 11.5px; color: #6b7893; margin-top: 14px; min-height: 18px; }
+
+  /* 完成 */
+  .done { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .check { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.35);
+    box-shadow: 0 0 36px rgba(34,197,94,.25); margin-bottom: 18px; }
+  .check svg { width: 30px; height: 30px; stroke: #4ade80; fill: none; stroke-width: 2.4;
+    stroke-linecap: round; stroke-linejoin: round; }
+  .done h2 { font-size: 17px; margin-bottom: 8px; }
+  .done p { font-size: 12.5px; color: #9aa8c4; line-height: 1.7; }
+
+  .foot { position: relative; z-index: 2; padding: 0 40px 18px; font-size: 11px;
+    color: #4b5872; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.2h6.2L10 22l9-11.5h-6.4L13 2Z" fill="url(#g)"/><defs><linearGradient id="g" x1="4" y1="2" x2="20" y2="22"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs></svg>
+    </div>
+    <div>
+      <h1>景同志·电脑加速</h1>
+      <p>Version 1.2.0 · 安装向导</p>
+    </div>
+  </div>
+
+  <!-- 欢迎 -->
+  <div class="view on" id="view-welcome">
+    <div class="field">
+      <label>安装位置</label>
+      <div class="pathrow">
+        <input type="text" id="path" value="">
+        <button class="btn" id="btnBrowse">浏览…</button>
+      </div>
+    </div>
+    <div class="opts">
+      <label class="opt"><input type="checkbox" id="optDesktop" checked>创建桌面快捷方式</label>
+      <label class="opt"><input type="checkbox" id="optLaunch" checked>安装完成后立即启动</label>
+    </div>
+    <div class="tip" id="freeTip">程序为纯本地运行，不联网、无广告、无捆绑。卸载可在「设置 → 应用」中完成。</div>
+    <div class="actions">
+      <button class="btn" id="btnCancel">退出</button>
+      <button class="btn primary" id="btnInstall">开始安装</button>
+    </div>
+  </div>
+
+  <!-- 安装中 -->
+  <div class="view" id="view-install">
+    <div class="prog-wrap">
+      <div class="prog-label"><span>正在安装…</span><span id="pct">0%</span></div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="step-txt" id="stepTxt">准备安装目录…</div>
+    </div>
+  </div>
+
+  <!-- 完成 -->
+  <div class="view" id="view-done">
+    <div class="done">
+      <div class="check"><svg viewBox="0 0 24 24"><path d="m4 12.5 5.2 5.2L20 6.5"/></svg></div>
+      <h2>安装完成</h2>
+      <p id="doneMsg">已成功安装到本机。<br>可以在开始菜单或桌面找到「景同志·电脑加速」。</p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn" id="btnOpenDir">打开安装目录</button>
+        <button class="btn primary" id="btnFinish">完成</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  <span>微信公众号：景同志　·　小红书：景同学</span>
+  <span id="verFoot">v1.2.0</span>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let installPath = '';
+let installedExe = '';
+
+function show(id) {
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('on'));
+  $('#' + id).classList.add('on');
+}
+async function api(name, ...args) {
+  for (let i = 0; i < 40; i++) {
+    if (window.pywebview && window.pywebview.api) break;
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  return await window.pywebview.api[name](...args);
+}
+
+(async () => {
+  const d = await api('default_dir');
+  installPath = d.path || 'C:\\Program Files\\JingBoost';
+  $('#path').value = installPath;
+  if (d.free) {
+    $('#freeTip').textContent =
+      `目标磁盘剩余 ${(d.free / 1073741824).toFixed(1)} GB，程序体积约 35 MB。纯本地运行，不联网、无广告、无捆绑。`;
+  }
+  if (!d.has_payload) {
+    $('#btnInstall').disabled = true;
+    $('#freeTip').textContent = '安装包不完整：未找到主程序文件。';
+  }
+})();
+
+$('#btnBrowse').onclick = async () => {
+  const r = await api('browse');
+  if (r && r.ok) $('#path').value = r.path;
+};
+$('#btnCancel').onclick = () => api('finish');
+
+$('#btnInstall').onclick = async () => {
+  const p = $('#path').value.trim();
+  if (!p) return;
+  const desktop = $('#optDesktop').checked;
+  const launch = $('#optLaunch').checked;
+  show('view-install');
+
+  // 视觉进度（实际安装是同步调用）
+  let pct = 6;
+  const timer = setInterval(() => {
+    pct = Math.min(90, pct + Math.random() * 9);
+    $('#bar').style.width = pct + '%';
+    $('#pct').textContent = Math.round(pct) + '%';
+    $('#stepTxt').textContent = pct < 40 ? '正在复制程序文件…'
+      : pct < 70 ? '正在创建快捷方式…' : '正在写入卸载信息…';
+  }, 220);
+
+  const r = await api('install', p, desktop, launch);
+  clearInterval(timer);
+  $('#bar').style.width = '100%';
+  $('#pct').textContent = '100%';
+  $('#stepTxt').textContent = r.msg || '';
+
+  if (!r.ok) {
+    await new Promise((res) => setTimeout(res, 500));
+    show('view-welcome');
+    $('#freeTip').textContent = '安装失败：' + (r.msg || '未知错误');
+    return;
+  }
+  installedExe = r.path;
+  await new Promise((res) => setTimeout(res, 620));
+  show('view-done');
+  $('#doneMsg').innerHTML = `已成功安装到：<br><span style="color:#9ccbff">${r.path}</span>`;
+  if (launch) $('#btnFinish').textContent = '完成';
+};
+
+$('#btnOpenDir').onclick = () => api('open_dir', installPath);
+$('#btnFinish').onclick = () => api('finish');
+</script>
+</body>
+</html>

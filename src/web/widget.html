@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JingBoost Widget</title>
+<style>
+  :root {
+    --card: linear-gradient(168deg, #ffffff 0%, #edf2fd 100%);
+    --card-solid: #ffffff;
+    --line: rgba(15, 23, 42, .11);
+    --hi: rgba(255, 255, 255, .95);
+    --text: #101828;
+    --text2: #7b869c;
+    --track: rgba(15, 23, 42, .085);
+    --ring: #16a34a;
+    --accent: #2f6bff;
+    --accent2: #5b4bff;
+    --shadow: 0 10px 26px rgba(23, 43, 99, .16), 0 2px 6px rgba(23, 43, 99, .07);
+    --sweep: rgba(255, 255, 255, .72);
+    --gloss: rgba(255, 255, 255, .62);
+  }
+  body.dark {
+    --card: linear-gradient(168deg, #212c43 0%, #101728 100%);
+    --card-solid: #161e30;
+    --line: rgba(255, 255, 255, .13);
+    --hi: rgba(255, 255, 255, .07);
+    --text: #eaf0ff;
+    --text2: #8e9bb5;
+    --track: rgba(255, 255, 255, .10);
+    --ring: #22c55e;
+    --accent: #3b82f6;
+    --accent2: #7c6bff;
+    --shadow: 0 12px 30px rgba(0, 0, 0, .48), 0 2px 8px rgba(0, 0, 0, .30);
+    --sweep: rgba(255, 255, 255, .26);
+    --gloss: rgba(255, 255, 255, .055);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: var(--card-solid);
+  }
+  body { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+         -webkit-user-select: none; user-select: none; cursor: default; }
+
+  /* 铺满整个窗口：窗口本身已按同半径裁成圆角，不能再留 inset，
+     否则露出的窗口底色就是一圈"透明边" */
+  .pill {
+    position: absolute; inset: 0; border-radius: 15px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow), inset 0 1px 0 var(--hi),
+                inset 0 -1px 0 rgba(15, 23, 42, .035);
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 10px 0 12px;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  /* 顶部一层极淡高光，弥补窗口裁剪掉外阴影后缺失的层次 */
+  .pill::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 54%;
+    border-radius: 15px 15px 0 0; pointer-events: none;
+    background: linear-gradient(180deg, var(--gloss), transparent);
+    opacity: .9;
+  }
+  .pill > .status, .pill > .stats, .pill > .boost, .pill > .close { position: relative; }
+  .pill.drag { cursor: move; }
+
+  /* ---- 左侧：环形健康评分 + 闪电 ---- */
+  .status {
+    flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center; position: relative;
+    background: conic-gradient(var(--ring) calc(var(--p, 0) * 1%), var(--track) 0);
+    transition: background .35s ease;
+  }
+  .status::before {
+    content: ""; position: absolute; inset: 4px; border-radius: 50%;
+    background: var(--card-solid);
+  }
+  .status svg { position: relative; width: 14px; height: 14px; fill: var(--ring);
+                transition: fill .35s ease; }
+  .status.pulse { animation: statusPulse .6s ease-out; }
+  @keyframes statusPulse {
+    0% { transform: scale(1) } 40% { transform: scale(1.16) } 100% { transform: scale(1) }
+  }
+
+  /* ---- 中间：CPU / 内存 / 网速 ----
+     列宽固定：网速从 "999K" 变成 "1.0M" 时不能让整颗胶囊跟着抖。
+     宽度仍由内容决定（胶囊前端量 max-content 回传给后端改窗口）。 */
+  .stats { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .stat { flex: 0 0 auto; min-width: 44px; display: flex; flex-direction: column;
+          gap: 1px; }
+  /* 关掉某一项时的辅助类 */
+  .hid { display: none !important; }
+  .stat .k { font-size: 8.5px; letter-spacing: .2px; color: var(--text2);
+             line-height: 1.1; white-space: nowrap; }
+  .stat .v { display: flex; align-items: baseline; font-size: 13px; font-weight: 700;
+             color: var(--text); line-height: 1.2;
+             font-variant-numeric: tabular-nums; white-space: nowrap;
+             overflow: hidden; }
+  .stat .v small { font-size: 8.5px; font-weight: 600; margin-left: 1px; opacity: .65; }
+  .stat .ar { font-size: 10px; font-weight: 700; opacity: .5; margin-right: 1px;
+              line-height: 1; }
+
+  /* ---- 加速按钮 ---- */
+  .boost {
+    position: relative; overflow: hidden; flex: 0 0 auto; cursor: pointer;
+    height: 30px; padding: 0 11px; border: none; border-radius: 10px;
+    display: flex; align-items: center; gap: 4px; font-family: inherit;
+    font-size: 11.5px; font-weight: 650; letter-spacing: .3px; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 4px 12px rgba(47, 107, 255, .34),
+                inset 0 1px 0 rgba(255, 255, 255, .30);
+    transition: transform .14s ease, box-shadow .16s ease, filter .16s ease;
+  }
+  .boost:hover { transform: translateY(-1px);
+                 box-shadow: 0 6px 16px rgba(47, 107, 255, .44),
+                             inset 0 1px 0 rgba(255, 255, 255, .30); }
+  .boost:active { transform: scale(.95); }
+  .boost:disabled { cursor: default; }
+  .boost .ico { width: 11px; height: 11px; flex: 0 0 auto; }
+  .boost .bolt { fill: currentColor; }
+  .boost .check { display: none; fill: none; stroke: currentColor; stroke-width: 2.6;
+                  stroke-linecap: round; stroke-linejoin: round; }
+
+  /* 点击涟漪 */
+  .ripple {
+    position: absolute; left: 50%; top: 50%; width: 12px; height: 12px;
+    margin: -6px 0 0 -6px; border-radius: 50%; pointer-events: none;
+    background: rgba(255, 255, 255, .6); opacity: 0; transform: scale(0);
+  }
+  .boost.rip .ripple { animation: ripple .62s cubic-bezier(.2, .6, .3, 1); }
+  @keyframes ripple {
+    0% { transform: scale(0); opacity: .62 }
+    100% { transform: scale(13); opacity: 0 }
+  }
+
+  /* 加速中：向外扩散的光环 */
+  .boost.busy { animation: halo 1.15s ease-in-out infinite; }
+  @keyframes halo {
+    0%, 100% { box-shadow: 0 4px 12px rgba(47, 107, 255, .34),
+                           0 0 0 0 rgba(91, 75, 255, .50); }
+    55%      { box-shadow: 0 6px 20px rgba(47, 107, 255, .52),
+                           0 0 0 8px rgba(91, 75, 255, 0); }
+  }
+
+  /* 完成：变绿 + 对勾 + 弹一下 */
+  .boost.done {
+    background: linear-gradient(135deg, #10b981, #22c55e);
+    box-shadow: 0 5px 16px rgba(16, 185, 129, .45),
+                inset 0 1px 0 rgba(255, 255, 255, .28);
+    animation: pop .46s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .boost.done .bolt { display: none; }
+  .boost.done .check { display: block; }
+  @keyframes pop {
+    0% { transform: scale(1) } 38% { transform: scale(1.10) } 100% { transform: scale(1) }
+  }
+
+  /* 整颗胶囊扫光 */
+  .shine { position: absolute; inset: 0; border-radius: inherit;
+           overflow: hidden; pointer-events: none; }
+  .shine::before {
+    content: ""; position: absolute; top: -30%; bottom: -30%; left: -45%; width: 42%;
+    background: linear-gradient(100deg, transparent, var(--sweep), transparent);
+    transform: skewX(-18deg); opacity: 0;
+  }
+  .pill.sweeping .shine::before { animation: sweep .82s cubic-bezier(.2, .7, .3, 1); }
+  @keyframes sweep {
+    0% { left: -45%; opacity: 0 }
+    14% { opacity: .88 }
+    100% { left: 108%; opacity: 0 }
+  }
+
+  /* ---- 关闭 ---- */
+  .close {
+    flex: 0 0 auto; width: 19px; height: 19px; padding: 0; border: none;
+    border-radius: 6px; background: transparent; color: var(--text2);
+    cursor: pointer; display: grid; place-items: center;
+    transition: background .15s, color .15s;
+  }
+  .close:hover { background: var(--track); color: var(--text); }
+  .close svg { width: 9px; height: 9px; stroke: currentColor; stroke-width: 2.4; fill: none; }
+
+  /* 贴边隐藏后露出的提示条 */
+  .peek { position: absolute; opacity: 0; transition: opacity .2s;
+          pointer-events: none; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+  .peek-l { left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; }
+  .peek-r { right: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 3px 0 0 3px; }
+  .peek-b { left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; }
+  body[data-peek="left"] .peek-r,
+  body[data-peek="right"] .peek-l,
+  body[data-peek="top"] .peek-b { opacity: 1; }
+  body[data-peek] .pill { opacity: 0; transform: scale(.96); pointer-events: none; }
+</style>
+</head>
+<body>
+  <div class="pill drag" id="pill">
+    <div class="status" id="status" title="健康评分">
+      <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.2h6.2L10 22l9-11.5h-6.4L13 2Z"/></svg>
+    </div>
+    <div class="stats" id="stats">
+      <div class="stat" id="statCpu"><span class="k">CPU</span>
+        <span class="v" id="vCpu"><span id="vCpuVal">--</span><small>%</small></span></div>
+      <div class="stat" id="statRam"><span class="k">内存</span>
+        <span class="v" id="vRam"><span id="vRamVal">--</span><small>%</small></span></div>
+      <div class="stat" id="netStat"><span class="k">网速</span>
+        <span class="v"><span class="ar">↓</span><span id="vNetVal">--</span></span></div>
+    </div>
+    <button class="boost" id="btnBoost">
+      <svg class="ico bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+      <svg class="ico check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>
+      <span class="lbl">加速</span>
+      <span class="ripple"></span>
+    </button>
+    <button class="close" id="btnHide" title="隐藏悬浮胶囊">
+      <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+    </button>
+    <span class="shine"></span>
+  </div>
+  <div class="peek peek-l"></div><div class="peek peek-r"></div><div class="peek peek-b"></div>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const pill = $('#pill');
+  const btn = $('#btnBoost');
+
+  function call(name, ...args) {
+    if (window.pywebview && window.pywebview.api && window.pywebview.api[name]) {
+      return window.pywebview.api[name](...args);
+    }
+    return Promise.resolve(null);
+  }
+
+  // "1.2 MB/s" -> "1.2M"，"356 KB/s" -> "356K"
+  function shortSpeed(s) {
+    if (!s) return '--';
+    return String(s).replace(/\s*\/s\s*$/, '').replace(/\s+/g, '')
+      .replace('MB', 'M').replace('KB', 'K').replace('GB', 'G').replace(/B$/, '') || '--';
+  }
+
+  function paint(d) {
+    if (!d) return;
+    $('#vCpuVal').textContent = Math.round(d.cpu);
+    $('#vRamVal').textContent = Math.round(d.ram);
+    const down = d.net_down || d.net || '';
+    $('#vNetVal').textContent = shortSpeed(down);
+    if (d.net_up) {
+      $('#netStat').title = '上行 ' + d.net_up + '　下行 ' + down;
+    }
+
+    const st = $('#status');
+    const score = (d.score == null) ? null : Math.max(0, Math.min(100, d.score));
+    st.style.setProperty('--p', score == null ? 0 : score);
+    const color = score == null ? 'var(--track)'
+      : score >= 85 ? (document.body.classList.contains('dark') ? '#22c55e' : '#16a34a')
+      : score >= 60 ? '#f59e0b' : '#ef4444';
+    st.style.setProperty('--ring', color);
+    st.title = score == null ? '健康评分：计算中' : '健康评分 ' + score;
+  }
+
+  window.__setPeek = function (side) {
+    if (side) document.body.dataset.peek = side;
+    else delete document.body.dataset.peek;
+  };
+  window.__setTheme = function (t) {
+    document.body.classList.toggle('dark', t === 'dark');
+  };
+
+  /* ---------------- 外观：配色 + 显示哪些信息 + 宽度自适应 ----------------
+     透明度由后端用 DWM 整窗 alpha 处理（CSS 半透明会露出窗口灰底），
+     这里只负责配色和列的显隐。 */
+  let lastW = 0, measureTimer = null, lookKey = '';
+
+  function applyLook(s) {
+    if (!s) return;
+    const items = Array.isArray(s.items) ? s.items : ['score', 'cpu', 'ram', 'net'];
+    const key = items.join(',') + '|' + (s.accent || '');
+    if (key === lookKey) return;        // 没变就别重排
+    lookKey = key;
+
+    $('#status').classList.toggle('hid', !items.includes('score'));
+    $('#statCpu').classList.toggle('hid', !items.includes('cpu'));
+    $('#statRam').classList.toggle('hid', !items.includes('ram'));
+    $('#netStat').classList.toggle('hid', !items.includes('net'));
+    const anyStat = items.some((k) => k === 'cpu' || k === 'ram' || k === 'net');
+    $('#stats').classList.toggle('hid', !anyStat);
+
+    if (s.accent) {
+      // 写在 body 的内联样式上：body.dark 里的 --accent 会盖掉 :root 的值
+      const b = document.body.style;
+      b.setProperty('--accent', s.accent);
+      b.setProperty('--accent2', s.accent2 || s.accent);
+    }
+    scheduleMeasure();
+  }
+
+  function scheduleMeasure() {
+    clearTimeout(measureTimer);
+    measureTimer = setTimeout(reportWidth, 60);
+  }
+
+  function reportWidth() {
+    pill.classList.add('measuring');
+    pill.style.left = '0';
+    pill.style.right = 'auto';
+    pill.style.width = 'max-content';
+    const w = Math.ceil(pill.getBoundingClientRect().width) + 2;
+    pill.style.left = '';
+    pill.style.right = '';
+    pill.style.width = '';
+    pill.classList.remove('measuring');
+    if (Math.abs(w - lastW) < 4) return;   // 4px 以内不动，避免像素级抖动
+    // 成功才记账：pywebview 还没就绪时 call() 返回 null，
+    // 这时若先记下 lastW，宽度就永远停在初始值、右侧内容被裁掉。
+    Promise.resolve(call('widget_resize', w)).then((r) => {
+      if (r && r.ok) lastW = w;
+    }).catch(() => { /* 下一轮 refreshState 会再试 */ });
+  }
+
+  async function refresh() {
+    try { paint(await call('widget_data')); } catch (e) { /* ignore */ }
+  }
+
+  /* ---------------- 按钮特效 ---------------- */
+  function ripple() {
+    btn.classList.remove('rip');
+    void btn.offsetWidth;          // 强制重排，让动画可以重复播放
+    btn.classList.add('rip');
+  }
+  function sweep() {
+    pill.classList.remove('sweeping');
+    void pill.offsetWidth;
+    pill.classList.add('sweeping');
+  }
+  function setBtn(text, mode) {
+    btn.querySelector('.lbl').textContent = text;
+    btn.classList.toggle('busy', mode === 'busy');
+    btn.classList.toggle('done', mode === 'done');
+    btn.disabled = mode === 'busy';
+  }
+
+  let boostBusy = false, wasBoosting = false;
+  function startBoostFx() {
+    ripple();
+    sweep();
+    $('#status').classList.add('pulse');
+    setTimeout(() => $('#status').classList.remove('pulse'), 640);
+  }
+  function finishBoostFx(msg) {
+    setBtn(msg || '完成', 'done');
+    sweep();
+    setTimeout(() => { if (!boostBusy) setBtn('加速', null); }, 2200);
+  }
+
+  btn.onclick = async () => {
+    if (boostBusy) return;
+    boostBusy = true;
+    wasBoosting = true;
+    startBoostFx();
+    setBtn('加速中', 'busy');
+    try {
+      const r = await call('widget_boost');
+      if (!r || r.ok === false) {
+        boostBusy = false; wasBoosting = false;
+        setBtn('失败', null);
+        setTimeout(() => { if (!boostBusy) setBtn('加速', null); }, 2000);
+      }
+    } catch (err) {
+      boostBusy = false; wasBoosting = false;
+      setBtn('失败', null);
+      setTimeout(() => { if (!boostBusy) setBtn('加速', null); }, 2000);
+    }
+  };
+
+  /* 状态轮询：加速状态以后端为准（托盘里发起也会同步） */
+  async function refreshState() {
+    try {
+      const s = await call('widget_state');
+      if (!s) return;
+      window.__setPeek(s.peek || null);
+      window.__setTheme(s.theme);
+      applyLook(s);
+      if (!lastW) scheduleMeasure();     // 首次没量成功就一直补试
+      if (s.boosting && !boostBusy) {
+        boostBusy = true;
+        startBoostFx();
+        setBtn('加速中', 'busy');
+      }
+      if (boostBusy && wasBoosting && !s.boosting) {
+        boostBusy = false;
+        finishBoostFx(s.boost_msg);
+        refresh();
+      }
+      wasBoosting = !!s.boosting;
+    } catch (e) { /* ignore */ }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const st = await call('get_settings');
+      if (st && st.settings) window.__setTheme(st.settings.theme);
+    } catch (e) { /* ignore */ }
+    await refresh();
+    await refreshState();
+    setInterval(refresh, 2000);
+    setInterval(refreshState, 350);
+  });
+
+  // 拖动交给后端用 Win32 坐标跟随鼠标，避免鼠标移出 WebView 时丢事件
+  document.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button')) return;
+    call('widget_drag_start');
+  });
+
+  $('#btnHide').onclick = () => call('widget_set', false);
+</script>
+</body>
+</html>

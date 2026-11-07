@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>景同志·电脑加速</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-grid"></div>
+
+<div class="app">
+  <!-- ============ 侧边栏 ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.2h6.2L10 22l9-11.5h-6.4L13 2Z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="4" y1="2" x2="20" y2="22"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs></svg>
+      </div>
+      <div class="brand-text">
+        <b>电脑加速</b>
+        <span id="sideVer">JingBoost v1.4.2</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <div class="nav-group">总览</div>
+      <a class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-12h8V3h-8v6Z"/></svg>
+        <span>仪表盘</span></a>
+      <a class="nav-item" data-page="boost">
+        <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+        <span>一键加速</span></a>
+
+      <div class="nav-group">清理与优化</div>
+      <a class="nav-item" data-page="clean">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v6m4-6v6"/></svg>
+        <span>垃圾清理</span></a>
+      <a class="nav-item" data-page="tweak">
+        <svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4m4 0h8M4 18h12m4 0h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+        <span>系统调优</span></a>
+      <a class="nav-item" data-page="network">
+        <svg viewBox="0 0 24 24"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.3a10.5 10.5 0 0 1 14 0M8.5 15.8a6 6 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.4"/></svg>
+        <span>网络优化</span></a>
+
+      <div class="nav-group">系统管理</div>
+      <a class="nav-item" data-page="startup">
+        <svg viewBox="0 0 24 24"><path d="M5 3v6a4 4 0 0 0 4 4h6a4 4 0 0 1 4 4v4"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="3" r="2"/></svg>
+        <span>启动项</span></a>
+      <a class="nav-item" data-page="process">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 20h10M9 9h6M9 13h4"/></svg>
+        <span>进程管理</span></a>
+      <a class="nav-item" data-page="service">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg>
+        <span>服务管理</span></a>
+      <a class="nav-item" data-page="repair">
+        <svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.4"/></svg>
+        <span>系统修复</span></a>
+      <a class="nav-item" data-page="disk">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+        <span>磁盘分析</span></a>
+
+      <div class="nav-group">其他</div>
+      <a class="nav-item" data-page="sysinfo">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v5h1"/></svg>
+        <span>系统信息</span></a>
+      <a class="nav-item" data-page="about">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.3-9A5.4 5.4 0 0 1 12 6a5.4 5.4 0 0 1 9.3 6c-1.8 4.4-9.3 9-9.3 9Z"/></svg>
+        <span>关于作者</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <div class="admin-pill" id="adminPill">检测权限中…</div>
+      <div class="side-tip">公众号：景同志</div>
+    </div>
+  </aside>
+
+  <!-- ============ 主区域 ============ -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">仪表盘</h1>
+        <p id="pageSub">实时掌握电脑状态，一键恢复流畅</p>
+      </div>
+      <div class="top-stats">
+        <div class="top-stat"><span>CPU</span><b id="topCpu">--</b></div>
+        <div class="top-stat"><span>内存</span><b id="topRam">--</b></div>
+        <div class="top-stat"><span>下行</span><b id="topNet">--</b></div>
+        <button class="icon-btn" id="btnWidget" title="显示 / 隐藏桌面悬浮胶囊">
+          <svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M6 12h3m2 0h1m2 0h4"/></svg>
+        </button>
+        <button class="icon-btn" id="btnTray" title="收进系统托盘">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v11H4zM8 20h8l-1-4H9l-1 4Zm2-11h8"/></svg>
+        </button>
+        <button class="icon-btn" id="btnSettings" title="设置">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.5 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.36.4.66.74.86.3.18.65.28 1 .29H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+        </button>
+        <button class="icon-btn" id="btnTheme" title="切换深色 / 浅色主题">
+          <svg class="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+          <svg class="ico-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <!-- ---------- 仪表盘 ---------- -->
+      <section class="page active" id="page-dashboard">
+        <div class="hero">
+          <div class="hero-left">
+            <div class="hero-badge"><i></i> 系统体检 · 实时监测</div>
+            <h2 class="hero-title">让你的电脑<span>立刻轻快起来</span></h2>
+            <p class="hero-desc" id="heroDesc">正在读取系统状态…</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-lg" id="btnBoostHero">
+                <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+                一键加速
+              </button>
+              <button class="btn btn-ghost btn-lg" id="btnExport">导出体检报告</button>
+            </div>
+          </div>
+          <div class="hero-score">
+            <svg class="score-ring" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="52"/>
+              <circle class="ring-fg" id="scoreRing" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="score-num"><b id="scoreVal">--</b><span>健康评分</span></div>
+          </div>
+        </div>
+
+        <div class="gauge-row">
+          <div class="card gauge-card">
+            <div class="gauge" id="gCpu">
+              <svg viewBox="0 0 100 100"><circle class="g-bg" cx="50" cy="50" r="42"/><circle class="g-fg" cx="50" cy="50" r="42"/></svg>
+              <div class="g-val">0<span>%</span></div>
+            </div>
+            <div class="g-name">处理器</div>
+            <div class="g-sub" id="cpuSub">-- 线程</div>
+          </div>
+          <div class="card gauge-card">
+            <div class="gauge" id="gRam">
+              <svg viewBox="0 0 100 100"><circle class="g-bg" cx="50" cy="50" r="42"/><circle class="g-fg" cx="50" cy="50" r="42"/></svg>
+              <div class="g-val">0<span>%</span></div>
+            </div>
+            <div class="g-name">内存</div>
+            <div class="g-sub" id="ramSub">-- / --</div>
+          </div>
+          <div class="card gauge-card">
+            <div class="gauge" id="gDisk">
+              <svg viewBox="0 0 100 100"><circle class="g-bg" cx="50" cy="50" r="42"/><circle class="g-fg" cx="50" cy="50" r="42"/></svg>
+              <div class="g-val">0<span>%</span></div>
+            </div>
+            <div class="g-name">系统盘</div>
+            <div class="g-sub" id="diskSub">-- 可用</div>
+          </div>
+          <div class="card gauge-card">
+            <div class="gauge" id="gNet">
+              <svg viewBox="0 0 100 100"><circle class="g-bg" cx="50" cy="50" r="42"/><circle class="g-fg" cx="50" cy="50" r="42"/></svg>
+              <div class="g-val g-net">0<span>/s</span></div>
+            </div>
+            <div class="g-name">网络下行</div>
+            <div class="g-sub" id="netSub">上行 --</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card pad">
+            <div class="card-head"><h3>体检发现</h3><button class="link-btn" id="btnRecheck">重新检测</button></div>
+            <div class="issue-list" id="issueList"><div class="empty">读取中…</div></div>
+          </div>
+          <div class="card pad">
+            <div class="card-head"><h3>内存占用 Top</h3><span class="muted" id="procCount">-- 个进程</span></div>
+            <div class="top-list" id="topList"><div class="empty">读取中…</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 一键加速 ---------- -->
+      <section class="page" id="page-boost">
+        <div class="card pad">
+          <div class="card-head"><h3>加速项目</h3><span class="muted">勾选后点击开始，全部为可逆操作</span></div>
+          <div class="opt-grid" id="boostOptions">
+            <label class="opt checked"><input type="checkbox" data-k="clean" checked><div><b>垃圾清理</b><span>临时文件、回收站、更新缓存等安全项目</span></div></label>
+            <label class="opt checked"><input type="checkbox" data-k="memory" checked><div><b>内存释放</b><span>整理进程工作集并清空备用内存</span></div></label>
+            <label class="opt checked"><input type="checkbox" data-k="power" checked><div><b>高性能电源</b><span>切换电源计划，CPU 不再降频</span></div></label>
+            <label class="opt checked"><input type="checkbox" data-k="network" checked><div><b>网络刷新</b><span>刷新 DNS 缓存，恢复解析速度</span></div></label>
+            <label class="opt"><input type="checkbox" data-k="service"><div><b>非必要服务优化</b><span>停止遥测、Xbox 等后台服务</span></div></label>
+            <label class="opt"><input type="checkbox" data-k="tweak"><div><b>系统调优全套</b><span>视觉特效、启动延迟、游戏模式等</span></div></label>
+          </div>
+          <div class="boost-actions">
+            <button class="btn btn-primary" id="btnBoostRun">开始加速</button>
+            <button class="btn btn-ghost" id="btnMemOnly">仅释放内存</button>
+          </div>
+        </div>
+        <div class="card pad" id="boostResultCard" style="display:none">
+          <div class="card-head"><h3>加速结果</h3><span class="muted" id="boostElapsed"></span></div>
+          <div class="step-list" id="boostSteps"></div>
+        </div>
+      </section>
+
+      <!-- ---------- 垃圾清理 ---------- -->
+      <section class="page" id="page-clean">
+        <div class="card pad">
+          <div class="card-head">
+            <h3>垃圾扫描</h3>
+            <div class="head-actions">
+              <span class="muted" id="cleanTotal">尚未扫描</span>
+              <button class="btn btn-ghost btn-sm" id="btnCleanScan">开始扫描</button>
+              <button class="btn btn-primary btn-sm" id="btnCleanRun">立即清理</button>
+            </div>
+          </div>
+          <div class="clean-list" id="cleanList">
+            <div class="empty-state">点击「开始扫描」分析可清理的垃圾文件</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 系统调优 ---------- -->
+      <section class="page" id="page-tweak">
+        <div class="card pad">
+          <div class="card-head">
+            <h3>一键系统调优</h3>
+            <div class="head-actions">
+              <button class="btn btn-ghost btn-sm" id="btnTweakAll">全部应用</button>
+              <button class="btn btn-ghost btn-sm" id="btnRestoreReg">还原所有改动</button>
+            </div>
+          </div>
+          <p class="muted mb18" id="backupInfo">所有注册表改动都会记录，可随时一键还原。</p>
+          <div class="tweak-grid" id="tweakGrid"></div>
+        </div>
+        <div class="card pad">
+          <div class="card-head"><h3>电源与系统</h3></div>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-power="high">高性能</button>
+            <button class="btn btn-ghost btn-sm" data-power="balanced">平衡</button>
+            <button class="btn btn-ghost btn-sm" data-power="saver">节能</button>
+            <button class="btn btn-ghost btn-sm" data-power="ultimate">卓越性能</button>
+            <button class="btn btn-ghost btn-sm" id="btnHibOff">关闭休眠（省磁盘）</button>
+            <button class="btn btn-ghost btn-sm" id="btnRestartExp">重启资源管理器</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 网络 ---------- -->
+      <section class="page" id="page-network">
+        <div class="two-col">
+          <div class="card pad">
+            <div class="card-head"><h3>网络优化</h3></div>
+            <div class="btn-stack">
+              <button class="btn btn-ghost" data-net="flush">刷新 DNS 缓存</button>
+              <button class="btn btn-ghost" data-net="tcp">TCP 参数优化</button>
+              <button class="btn btn-ghost" data-net="winsock">重置 Winsock（需重启）</button>
+              <button class="btn btn-ghost" data-net="tcpip">重置 TCP/IP（需重启）</button>
+            </div>
+            <div class="divider"></div>
+            <div class="card-head"><h3 style="font-size:14px">DNS 服务器</h3></div>
+            <div class="row-actions mt10">
+              <button class="btn btn-ghost btn-sm" data-dns="223.5.5.5|223.6.6.6">阿里 DNS</button>
+              <button class="btn btn-ghost btn-sm" data-dns="119.29.29.29|182.254.116.116">腾讯 DNS</button>
+              <button class="btn btn-ghost btn-sm" data-dns="114.114.114.114|114.114.115.115">114 DNS</button>
+              <button class="btn btn-ghost btn-sm" id="btnDnsReset">自动获取</button>
+            </div>
+            <div class="kv-list mt10" id="dnsInfo"></div>
+          </div>
+          <div class="card pad">
+            <div class="card-head"><h3>网络测速</h3><button class="link-btn" id="btnPing">开始测速</button></div>
+            <div class="ping-list" id="pingList"><div class="empty">点击「开始测速」测试到常用节点的延迟</div></div>
+          </div>
+        </div>
+        <div class="card pad">
+          <div class="card-head"><h3>网卡状态</h3><span class="muted" id="connCount"></span></div>
+          <div class="table-wrap"><table class="tbl" id="nicTable"></table></div>
+        </div>
+        <div class="card pad">
+          <div class="card-head"><h3>hosts 文件</h3>
+            <div class="head-actions">
+              <button class="btn btn-ghost btn-sm" id="btnHostsView">查看内容</button>
+              <button class="btn btn-ghost btn-sm" id="btnHostsClean">重置为默认</button>
+              <button class="btn btn-ghost btn-sm" id="btnHostsRestore">恢复备份</button>
+            </div>
+          </div>
+          <pre class="code-box" id="hostsBox">点击「查看内容」读取 hosts 文件</pre>
+        </div>
+      </section>
+
+      <!-- ---------- 启动项 ---------- -->
+      <section class="page" id="page-startup">
+        <div class="card pad">
+          <div class="card-head"><h3>开机启动项</h3>
+            <div class="head-actions">
+              <span class="muted" id="startupCount"></span>
+              <button class="btn btn-ghost btn-sm" id="btnStartupRefresh">刷新</button>
+            </div>
+          </div>
+          <p class="muted mb18">禁用项目会移动到本工具的备份区，随时可以恢复，不会删除程序。</p>
+          <div class="table-wrap"><table class="tbl fixed" id="startupTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ---------- 进程 ---------- -->
+      <section class="page" id="page-process">
+        <div class="card pad">
+          <div class="card-head"><h3>进程管理</h3>
+            <div class="head-actions">
+              <input class="search" id="procSearch" placeholder="搜索进程名…">
+              <button class="btn btn-ghost btn-sm" data-sort="mem">按内存</button>
+              <button class="btn btn-ghost btn-sm" data-sort="cpu">按 CPU</button>
+              <button class="btn btn-ghost btn-sm" id="btnProcRefresh">刷新</button>
+            </div>
+          </div>
+          <div class="table-wrap tall"><table class="tbl fixed" id="procTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ---------- 服务 ---------- -->
+      <section class="page" id="page-service">
+        <div class="card pad">
+          <div class="card-head"><h3>系统服务</h3>
+            <div class="head-actions">
+              <input class="search" id="svcSearch" placeholder="搜索服务…">
+              <button class="btn btn-ghost btn-sm" id="btnSvcDisable">优化非必要服务</button>
+              <button class="btn btn-ghost btn-sm" id="btnSvcRefresh">刷新</button>
+            </div>
+          </div>
+          <div class="table-wrap tall"><table class="tbl" id="svcTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ---------- 系统修复 ---------- -->
+      <section class="page" id="page-repair">
+        <div class="two-col">
+          <div class="card pad">
+            <div class="card-head"><h3>系统修复工具</h3></div>
+            <div class="repair-grid">
+              <div class="repair-item">
+                <b>SFC 系统文件检查</b><p>扫描并修复被破坏的系统文件，约 5-15 分钟</p>
+                <button class="btn btn-ghost btn-sm" data-repair="sfc">开始检查</button>
+              </div>
+              <div class="repair-item">
+                <b>DISM 映像修复</b><p>修复系统映像损坏，解决更新失败等问题</p>
+                <button class="btn btn-ghost btn-sm" data-repair="dism">开始修复</button>
+              </div>
+              <div class="repair-item">
+                <b>磁盘错误检查</b><p>检查系统盘文件系统错误（只读扫描）</p>
+                <button class="btn btn-ghost btn-sm" data-repair="chkdsk">开始检查</button>
+              </div>
+              <div class="repair-item">
+                <b>磁盘优化</b><p>SSD 执行 TRIM，机械盘执行碎片整理</p>
+                <button class="btn btn-ghost btn-sm" data-repair="optimize">开始优化</button>
+              </div>
+            </div>
+          </div>
+          <div class="card pad">
+            <div class="card-head"><h3>磁盘健康</h3></div>
+            <div class="health-list" id="diskHealth"><div class="empty">读取中…</div></div>
+            <div class="divider"></div>
+            <div class="card-head"><h3 style="font-size:14px">系统还原点</h3>
+              <button class="btn btn-ghost btn-sm" data-repair="restore_point">创建还原点</button>
+            </div>
+            <div class="restore-list" id="restoreList"></div>
+          </div>
+        </div>
+        <div class="card pad" id="jobCard" style="display:none">
+          <div class="card-head"><h3 id="jobTitle">任务执行中</h3><span class="muted" id="jobElapsed"></span></div>
+          <div class="progress"><div class="progress-bar" id="jobBar"></div></div>
+          <pre class="code-box" id="jobLog"></pre>
+        </div>
+      </section>
+
+      <!-- ---------- 磁盘分析 ---------- -->
+      <section class="page" id="page-disk">
+        <div class="card pad">
+          <div class="tabs" id="diskTabs">
+            <button class="tab active" data-tab="big">大文件</button>
+            <button class="tab" data-tab="dup">重复文件</button>
+            <button class="tab" data-tab="empty">空文件夹</button>
+          </div>
+          <div class="disk-toolbar">
+            <div id="bigOpts">
+              <label class="inline">大于
+                <select id="bigSize"><option value="50">50 MB</option><option value="100" selected>100 MB</option><option value="500">500 MB</option><option value="1024">1 GB</option></select>
+              </label>
+            </div>
+            <div id="dupOpts" style="display:none">
+              <label class="inline">大于
+                <select id="dupSize"><option value="100">100 KB</option><option value="512" selected>512 KB</option><option value="1024">1 MB</option><option value="10240">10 MB</option></select>
+              </label>
+            </div>
+            <div class="grow"></div>
+            <button class="btn btn-ghost btn-sm" id="btnScanCancel" style="display:none">取消</button>
+            <button class="btn btn-primary btn-sm" id="btnScanStart">开始扫描</button>
+          </div>
+          <div class="progress slim" id="scanProgressWrap" style="display:none"><div class="progress-bar" id="scanBar"></div></div>
+          <div class="muted mb12" id="scanHint"></div>
+          <div class="table-wrap tall"><table class="tbl" id="scanTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ---------- 系统信息 ---------- -->
+      <section class="page" id="page-sysinfo">
+        <div class="card pad">
+          <div class="card-head"><h3>硬件与系统</h3><button class="link-btn" id="btnSysRefresh">重新读取</button></div>
+          <div class="spec-grid" id="specGrid"><div class="empty">读取中…</div></div>
+        </div>
+        <div class="card pad">
+          <div class="card-head"><h3>磁盘分区</h3></div>
+          <div id="diskList" class="disk-list"></div>
+        </div>
+      </section>
+
+      <!-- ---------- 关于 ---------- -->
+      <section class="page" id="page-about">
+        <div class="about-hero">
+          <div class="about-logo">
+            <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.2h6.2L10 22l9-11.5h-6.4L13 2Z" fill="url(#g2)"/><defs><linearGradient id="g2" x1="4" y1="2" x2="20" y2="22"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs></svg>
+          </div>
+          <h2>景同志·电脑加速</h2>
+          <p class="about-ver" id="aboutVer">Version 1.4.3 · 完全免费 · 无广告 · 无捆绑</p>
+          <p class="about-slogan">「让每一台电脑都跑得更顺一点」</p>
+        </div>
+
+        <div class="two-col">
+          <div class="card pad">
+            <div class="card-head"><h3>软件介绍</h3></div>
+            <p class="about-p">这是一款纯本地运行的 Windows 电脑加速与维护工具。所有优化都在你的电脑上完成，<b>不联网、不上传任何数据、不修改系统关键文件</b>。</p>
+            <p class="about-p">内置 40+ 项实用功能：一键加速、13 类垃圾清理、启动项管理、进程与服务管理、网络诊断与优化、系统调优、系统文件修复、大文件与重复文件分析、注册表改动一键还原等。</p>
+            <div class="feature-chips">
+              <span>一键加速</span><span>垃圾清理</span><span>内存释放</span><span>启动项管理</span>
+              <span>进程管理</span><span>服务优化</span><span>网络优化</span><span>系统调优</span>
+              <span>系统修复</span><span>磁盘分析</span><span>注册表还原</span><span>体检报告</span>
+            </div>
+            <div class="divider"></div>
+            <div class="safety">
+              <b>安全说明</b>
+              <ul>
+                <li>所有注册表改动都有备份，可一键还原</li>
+                <li>不结束系统关键进程，不删除系统文件</li>
+                <li>清理前可先扫描预览，确认后再执行</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card pad contact-card">
+            <div class="card-head"><h3>联系作者</h3></div>
+            <p class="muted mb18">使用中有问题、有建议，或者想要更多功能，欢迎找我。</p>
+
+            <div class="contact-item" data-copy="景同志">
+              <div class="ci-icon wx">
+                <svg viewBox="0 0 24 24"><path d="M8.7 4C4.9 4 2 6.5 2 9.6c0 1.7.9 3.2 2.4 4.2l-.6 2 2.2-1.1c.8.2 1.6.4 2.5.4h.6a5 5 0 0 1-.2-1.4c0-3 2.9-5.4 6.5-5.4h.6C15.4 5.6 12.4 4 8.7 4Z"/><path d="M22 13.7c0-2.6-2.5-4.7-5.6-4.7s-5.6 2.1-5.6 4.7 2.5 4.7 5.6 4.7c.7 0 1.3-.1 1.9-.3l1.8.9-.5-1.6c1.5-.8 2.4-2.2 2.4-3.7Z"/></svg>
+              </div>
+              <div class="ci-main">
+                <span>微信公众号</span>
+                <b>景同志</b>
+              </div>
+              <button class="btn btn-ghost btn-sm">复制</button>
+            </div>
+
+            <div class="contact-item" data-copy="景同学">
+              <div class="ci-icon xhs">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 9v6m4-6v6m4-6v6"/></svg>
+              </div>
+              <div class="ci-main">
+                <span>小红书</span>
+                <b>景同学</b>
+              </div>
+              <button class="btn btn-ghost btn-sm">复制</button>
+            </div>
+
+            <div class="contact-item gh" data-url="https://github.com/jingpanlong/JingBoost" title="在浏览器中打开 GitHub 仓库">
+              <div class="ci-icon gh">
+                <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              </div>
+              <div class="ci-main">
+                <span>开源地址 · 最新版下载</span>
+                <b>github.com/jingpanlong/JingBoost</b>
+              </div>
+              <button class="btn btn-ghost btn-sm">打开</button>
+            </div>
+
+            <div class="contact-tip">
+              搜索公众号「<b>景同志</b>」或小红书「<b>景同学</b>」，可以获取软件更新、使用技巧和电脑优化干货。<br>
+              项目已在 <b>GitHub</b> 开源，欢迎 Star、提 Issue 或参与改进。
+            </div>
+
+            <div class="divider"></div>
+            <div class="about-meta">
+              <div><span>运行模式</span><b id="aboutAdmin">--</b></div>
+              <div><span>程序版本</span><b id="aboutVerNum">1.4.3</b></div>
+              <div><span>数据存储</span><b>纯本地，不联网</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div class="overlay hidden" id="overlay">
+  <div class="overlay-box">
+    <div class="spinner" id="overlaySpinner"></div>
+    <div class="overlay-text" id="overlayText">正在处理…</div>
+    <div class="ov-progress hidden" id="overlayProg">
+      <div class="ov-bar"><i id="overlayBar"></i></div>
+      <span class="ov-pct" id="overlayPct">0%</span>
+    </div>
+    <div class="overlay-sub" id="overlaySub">请稍候，不要关闭窗口</div>
+  </div>
+</div>
+
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <h3 id="modalTitle">确认操作</h3>
+    <p id="modalText"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modalCancel">取消</button>
+      <button class="btn btn-danger" id="modalOk">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="inputModal">
+  <div class="modal-box">
+    <h3 id="inputTitle">输入</h3>
+    <p id="inputText"></p>
+    <input type="text" class="search" id="inputVal" style="width:100%;padding:9px 12px">
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-ghost" id="inputCancel">取消</button>
+      <button class="btn btn-primary" id="inputOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="settingsModal">
+  <div class="modal-box wide">
+    <h3>设置</h3>
+    <p class="set-sub">改动即时生效并自动保存。</p>
+    <div class="set-list">
+      <label class="set-row">
+        <span class="set-ico blue"><svg viewBox="0 0 24 24"><path d="M12 3v9l6 3M5.6 6.6a8 8 0 1 0 12.8 0"/></svg></span>
+        <span class="set-txt"><b>开机自动启动</b><span>登录 Windows 后自动运行</span></span>
+        <input type="checkbox" class="sw" id="setAutostart">
+      </label>
+      <label class="set-row">
+        <span class="set-ico violet"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M6 12h3m2 0h1m2 0h4"/></svg></span>
+        <span class="set-txt"><b>桌面悬浮胶囊</b><span>置顶显示 CPU、内存，可拖动、一键加速</span></span>
+        <input type="checkbox" class="sw" id="setWidget">
+      </label>
+      <label class="set-row">
+        <span class="set-ico cyan"><svg viewBox="0 0 24 24"><path d="M4 4v16M20 4v16M8 12h8m-3-3 3 3-3 3"/></svg></span>
+        <span class="set-txt"><b>贴边自动隐藏</b><span>靠近屏幕边缘收起，鼠标移回滑出</span></span>
+        <input type="checkbox" class="sw" id="setEdge">
+      </label>
+      <label class="set-row">
+        <span class="set-ico green"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4zM8 20h8l-1-4H9l-1 4Z"/></svg></span>
+        <span class="set-txt"><b>关闭时收进托盘</b><span>点 × 不退出，缩到托盘</span></span>
+        <input type="checkbox" class="sw" id="setTray">
+      </label>
+
+      <div class="set-group-title">悬浮胶囊外观</div>
+
+      <div class="set-block">
+        <div class="set-block-head">
+          <span class="set-ico blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="set-txt"><b>透明度</b><span>越低越通透，30% 起</span></span>
+          <span class="set-val" id="setOpacityVal">100%</span>
+        </div>
+        <input type="range" class="rng" id="setOpacity" min="30" max="100" step="5" value="100">
+      </div>
+
+      <div class="set-block">
+        <div class="set-block-head">
+          <span class="set-ico violet"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg></span>
+          <span class="set-txt"><b>主题色</b><span>影响加速按钮与贴边提示条</span></span>
+          <input type="color" class="cp" id="setColor" value="#2f6bff" title="自定义颜色">
+        </div>
+        <div class="swatches" id="setAccent">
+          <button class="swatch" data-accent="blue" style="--c1:#2f6bff;--c2:#5b4bff" title="宝石蓝"></button>
+          <button class="swatch" data-accent="cyan" style="--c1:#0891b2;--c2:#0ea5e9" title="湖青"></button>
+          <button class="swatch" data-accent="green" style="--c1:#10b981;--c2:#22c55e" title="薄荷绿"></button>
+          <button class="swatch" data-accent="violet" style="--c1:#8b5cf6;--c2:#a855f7" title="星紫"></button>
+          <button class="swatch" data-accent="amber" style="--c1:#f59e0b;--c2:#f97316" title="琥珀橙"></button>
+          <button class="swatch" data-accent="pink" style="--c1:#ec4899;--c2:#f472b6" title="樱粉"></button>
+          <button class="swatch" data-accent="slate" style="--c1:#334155;--c2:#475569" title="石墨"></button>
+        </div>
+      </div>
+
+      <div class="set-block">
+        <div class="set-block-head">
+          <span class="set-ico cyan"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h13"/></svg></span>
+          <span class="set-txt"><b>胶囊上显示的内容</b><span>可以只留「加速」按钮，越少越清爽</span></span>
+        </div>
+        <div class="chips" id="setItems">
+          <button class="chip" data-item="score">健康评分</button>
+          <button class="chip" data-item="cpu">CPU</button>
+          <button class="chip" data-item="ram">内存</button>
+          <button class="chip" data-item="net">网速</button>
+        </div>
+      </div>
+    </div>
+    <div class="set-actions">
+      <button class="btn btn-ghost" id="btnAppQuit">退出程序</button>
+      <button class="btn btn-ghost" id="btnSettingsHideTray">立即收进托盘</button>
+      <button class="btn btn-primary" id="btnSettingsDone">完成</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

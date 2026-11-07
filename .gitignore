@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# PyInstaller 构建产物
+dist/
+build/work/
+build/work_setup/
+build/payload/
+build/*.spec
+build/*.log
+build/__pycache__/
+
+# 调试 / 预览产物
+src/web/_preview.html
+src/web/_widget_preview.html
+src/web/_designs.html
+src/web/_article_check.html
+
+# 测试与临时文件
+jingboost.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
