@@ -4,17 +4,17 @@
 
 **一款纯本地运行的 Windows 电脑加速 / 维护工具 · 40+ 项功能 · 无广告 · 无捆绑 · 完全免费开源**
 
-[![Release](https://img.shields.io/badge/release-v1.4.3-2f6bff)](../../releases)
+[![Release](https://img.shields.io/badge/release-v1.4.3-2f6bff)](https://github.com/jingpanlong/JingBoost/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078d4)](#-下载)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776ab)](#-从源码运行)
-[![License](https://img.shields.io/badge/license-MIT-059669)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-059669)](https://github.com/jingpanlong/JingBoost/blob/main/LICENSE)
 [![Stars](https://img.shields.io/badge/%E2%AD%90-点个Star支持-ffcb2e)](#)
 
 ![封面](docs/images/cover.png)
 
 *界面由 WebView2 渲染，后端 Python + ctypes 直接调用 Windows API —— 不联网、不上传任何数据。*
 
-[📥 下载最新版](../../releases/latest) · [🚀 从源码运行](#-从源码运行) · [🛠 自行打包](#-自行打包-exe) · [💬 联系作者](#-联系作者)
+[📥 下载最新版](https://github.com/jingpanlong/JingBoost/releases/latest) · [🚀 从源码运行](#-从源码运行) · [🛠 自行打包](#-自行打包-exe) · [💬 联系作者](#-联系作者)
 
 </div>
 
@@ -100,7 +100,7 @@ CIM/WMI → SMBIOS 注册表 → psutil/ctypes **三层兜底采集**，自动�
 
 ## 📥 下载
 
-前往 [**Releases**](../../releases/latest) 页面，两种版本任选：
+前往 [**Releases**](https://github.com/jingpanlong/JingBoost/releases/latest) 页面，两种版本任选：
 
 | 文件 | 说明 |
 | --- | --- |
@@ -176,7 +176,7 @@ python build/build_all.py
 
 - 微信公众号：**景同志**
 - 小红书：**景同学**
-- 使用问题 / 功能建议：欢迎提 [Issue](../../issues)
+- 使用问题 / 功能建议：欢迎提 [Issue](https://github.com/jingpanlong/JingBoost/issues)
 
 <div align="center">
 
@@ -186,4 +186,4 @@ python build/build_all.py
 
 ## 📃 License
 
-[MIT](LICENSE) © 景同志
+[MIT](https://github.com/jingpanlong/JingBoost/blob/main/LICENSE) © 景同志
